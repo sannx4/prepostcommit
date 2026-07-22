@@ -25,3 +25,4 @@ echo "automation done"
 
 
 # GIT hook test
+# second hook test
