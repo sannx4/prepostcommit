@@ -15,7 +15,8 @@ echo "System: $(uname -s)"
 echo "Curr Directory : $(pwd)"
 echo "Disk Usage:"
 df -h
-echo
+echo "Memory usage"
+free -h
 } >> "$LOGFILE"
 
 echo "System report created sucessfully"
