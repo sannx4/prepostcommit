@@ -19,3 +19,5 @@ df -h
 } >> "$LOGFILE"
 
 echo "System report created sucessfully"
+
+# testing pre-commit hook
