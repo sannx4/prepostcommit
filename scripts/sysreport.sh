@@ -13,6 +13,8 @@ echo "=== $(date '+%F %T') ==="
 echo "User: $(whoami)"
 echo "System: $(uname -s)"
 echo "Curr Directory : $(pwd)"
+echo "Disk Usage:"
+df -h
 
 } >> "$LOGFILE"
 
