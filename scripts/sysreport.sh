@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+LOGDIR="$HOME/automation-lab/logs"
+
+mkdir -p "$LOGDIR"
+
+LOGFILE="$LOGDIR/sysreport_$(date +%F).log"
+
+{
+echo "=== $(date '+%F %T') ==="
+echo "User: $(whoami)"
+echo "System: $(uname -s)"
+echo "Curr Directory : $(pwd)"
+
+} >> "$LOGFILE"
+
+echo "System report created sucessfully"
