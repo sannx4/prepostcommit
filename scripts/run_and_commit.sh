@@ -24,3 +24,4 @@ fi
 echo "automation done"
 
 
+# GIT hook test
