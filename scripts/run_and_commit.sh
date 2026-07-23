@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-PROJECT_DIR="$HOME/automation-lab"
+PROJECT_DIR="/home/pglab/automation-lab"
 
 cd "$PROJECT_DIR"
 
