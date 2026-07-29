@@ -414,3 +414,19 @@ Memory usage
                total        used        free      shared  buff/cache   available
 Mem:            15Gi       1.6Gi        10Gi       523Mi       3.6Gi        13Gi
 Swap:          2.0Gi          0B       2.0Gi
+=== 2026-07-29 10:45:01 ===
+User: pglab
+System: Linux
+Curr Directory : /home/pglab/automation-lab
+Disk Usage:
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           1.6G  2.5M  1.6G   1% /run
+/dev/nvme0n1p6   39G   14G   23G  37% /
+tmpfs           7.7G     0  7.7G   0% /dev/shm
+tmpfs           5.0M  4.0K  5.0M   1% /run/lock
+/dev/nvme0n1p1   96M   77M   20M  80% /boot/efi
+tmpfs           1.6G  116K  1.6G   1% /run/user/1000
+Memory usage
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       1.9Gi       9.8Gi       510Mi       3.6Gi        12Gi
+Swap:          2.0Gi          0B       2.0Gi
