@@ -1,0 +1,13 @@
+[Unit]
+Description=Generate System Report
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=pglab
+WorkingDirectory=/home/pglab/automation-lab
+ExecStart=/home/pglab/automation-lab/scripts/run_and_commit.sh
+
+[Install]
+WantedBy=multi-user.target
