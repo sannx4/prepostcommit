@@ -1,0 +1,46 @@
+name: Automation Lab CI/CD
+
+on:
+  push:
+    branches:
+      - master
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Bash syntax
+        run: |
+          bash -n scripts/sysreport.sh
+          bash -n scripts/run_and_commit.sh
+
+      - name: Check Python syntax
+        run: |
+          python3 -m py_compile scripts/prompt_report.py
+
+      - name: Run system report
+        run: |
+          chmod +x scripts/sysreport.sh
+          ./scripts/sysreport.sh
+
+      - name: Generate prompt-based report
+        run: |
+          python3 scripts/prompt_report.py \
+          logs/sysreport_$(date +%F).log \
+          "Analyze the automation result, detect errors and provide actionable recommendations."
+
+      - name: Show report
+        run: |
+          cat automation-summary.md
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-analysis-report
+          path: automation-summary.md
