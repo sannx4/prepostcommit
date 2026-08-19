@@ -61,6 +61,10 @@ jobs:
           name: automation-analysis-report
           path: automation-summary.md
 
+      - name: Controlled failure test
+        run: |
+          echo "Simulating CI/CD failure for Experiment 4"
+          exit 1
   deploy:
     name: Deploy Scripts
     needs: test
