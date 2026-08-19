@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Check Bash syntax
         run: |
@@ -32,15 +32,15 @@ jobs:
       - name: Generate prompt-based report
         run: |
           python3 scripts/prompt_report.py \
-          logs/sysreport_$(date +%F).log \
-          "Analyze the automation result, detect errors and provide actionable recommendations."
+            logs/sysreport_$(date +%F).log \
+            "Analyze the automation result, detect errors and provide actionable recommendations."
 
       - name: Show report
         run: |
           cat automation-summary.md
 
       - name: Upload report artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: automation-analysis-report
           path: automation-summary.md
