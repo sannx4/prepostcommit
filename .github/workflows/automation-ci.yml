@@ -7,8 +7,20 @@ on:
 
   workflow_dispatch:
 
+  schedule:
+    - cron: "*/30 * * * *"
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  AGILE_ISSUE: "10"
+
 jobs:
+
   test:
+    name: Test and Analyze
     runs-on: ubuntu-latest
 
     steps:
@@ -39,8 +51,93 @@ jobs:
         run: |
           cat automation-summary.md
 
+      - name: Add report to Actions summary
+        run: |
+          cat automation-summary.md >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload report artifact
         uses: actions/upload-artifact@v7
         with:
           name: automation-analysis-report
           path: automation-summary.md
+
+  deploy:
+    name: Deploy Scripts
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deployment
+          cp scripts/sysreport.sh deployment/
+          cp scripts/run_and_commit.sh deployment/
+          cp scripts/prompt_report.py deployment/
+          ls -l deployment
+
+      - name: Upload deployment package
+        uses: actions/upload-artifact@v7
+        with:
+          name: automation-deployment-package
+          path: deployment/
+
+  agile-update:
+    name: Update Agile Issue
+    needs:
+      - test
+      - deploy
+
+    if: always()
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Pipeline success - comment and close issue
+        if: >
+          needs.test.result == 'success' &&
+          needs.deploy.result == 'success'
+
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+        run: |
+          curl -sS \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${AGILE_ISSUE}/comments" \
+            -d '{"body":"✅ CI/CD PIPELINE SUCCESS\n\nTesting: SUCCESS\nPrompt report: SUCCESS\nDeployment: SUCCESS\n\nThe automated CI/CD workflow completed successfully."}'
+
+          curl -sS \
+            -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${AGILE_ISSUE}" \
+            -d '{"state":"closed"}'
+
+      - name: Pipeline failure - comment and reopen issue
+        if: >
+          needs.test.result != 'success' ||
+          needs.deploy.result != 'success'
+
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+        run: |
+          curl -sS \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${AGILE_ISSUE}/comments" \
+            -d '{"body":"❌ CI/CD PIPELINE FAILURE\n\nThe automated pipeline failed. Check the GitHub Actions logs, correct the problem, and rerun the workflow."}'
+
+          curl -sS \
+            -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${AGILE_ISSUE}" \
+            -d '{"state":"open"}'
